@@ -100,6 +100,13 @@ def plausibility(img0 : np.ndarray, img1 : np.ndarray, alpha = 0.1):
 
 
 def show_masks(images : np.ndarray):
+    """
+    Just show masks of all images
+
+    Parameters:
+    -----------
+    images: np.ndarray
+    """
     mask = []
     for i in range(len(images)):
         mask.append(get_masks(images[i]))
