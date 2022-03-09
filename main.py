@@ -41,7 +41,7 @@ def show(images : np.ndarray):
 
 def get_masks(img0 : np.ndarray, draw = False) -> np.ndarray:
     """
-    Thish fuction find closed contours, fill them and make masks
+    This fuction find closed contours, fill them and make masks
 
     Parameters:
     -----------
@@ -83,7 +83,7 @@ def proector(masks : np.ndarray, img1 : np.ndarray):
     return img
 
 
-def plausibility(img0 : np.ndarray, img1 : np.ndarray, alpha = 0.1):
+def plausibility(img0_ : np.ndarray, img1_ : np.ndarray, alpha = 0.3):
     """
     This fuction defines sameness objects on img0 and img1
 
@@ -93,13 +93,16 @@ def plausibility(img0 : np.ndarray, img1 : np.ndarray, alpha = 0.1):
     img1: np.ndarray
     alpha: np.float8 - maximum deviation from the img0
     """
-    proection = proector(get_masks(img0), img1[0])
-    if np.sum(np.abs(img1 - proection)) < alpha * np.sum(img1):
+    proection = proector(get_masks(img0_), img1_[0])
+    a = np.sum(img1_ - proection)
+    b = alpha*np.sum(img1_)
+    print(a, np.sum(img1_ - img0_))
+    if a < b:
         return True
     else: return False
 
 
-def show_masks(images : np.ndarray):
+def show_masks(img : np.ndarray):
     """
     Just show masks of all images
 
@@ -107,6 +110,7 @@ def show_masks(images : np.ndarray):
     -----------
     images: np.ndarray
     """
+    images = np.copy(img)
     mask = []
     for i in range(len(images)):
         mask.append(get_masks(images[i]))
@@ -117,6 +121,7 @@ if __name__ == "__main__":
     data_kube = np.array(load_images("data/kube"))
     data_ball = np.array(load_images("data/ball"))
     show(data_kube)
+    get_masks(data_kube[0], True)
     show_masks(data_kube)
     if plausibility(data_kube[4], data_kube[8]): print("The objects are the same")
     else: print("the objects are NOT the same")
