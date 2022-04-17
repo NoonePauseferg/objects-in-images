@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2 as cv
 import sys
+
 np.set_printoptions(threshold=sys.maxsize)
 
 
@@ -17,19 +18,14 @@ def load_images(folder):
         if _ != ".DS_Store":
             cur = cv.imread(os.path.join(folder, _))
             cur = cv.cvtColor(cur, cv.COLOR_BGR2GRAY)
-            cur = cv.resize(
-                cur,
-                (cur.shape[1] // 2,
-                 cur.shape[0] // 2),
-                interpolation=cv.INTER_AREA)
+            cur = cv.resize(cur, (cur.shape[1] // 2, cur.shape[0] // 2),
+                            interpolation=cv.INTER_AREA)
             cur[cur == 71] = 0
             cur[cur == 70] = 0
-            print(cur.shape)
+            # print(cur.shape)
             if cur is not None:
-                images.append(
-                    np.expand_dims(
-                        np.transpose(
-                            cur, (1, 0)), axis=0))
+                images.append(np.expand_dims(np.transpose(cur, (1, 0)),
+                                             axis=0))
     return images
 
 
@@ -61,8 +57,8 @@ def get_masks(img0: np.ndarray, draw=False) -> np.ndarray:
     gray = cv.Canny(img0[0], 5, 5)
     kernel = cv.getStructuringElement(cv.MORPH_RECT, (10, 10))
     gray = cv.morphologyEx(gray, cv.MORPH_CLOSE, kernel)
-    contours, _ = cv.findContours(
-        gray, cv.RETR_LIST, cv.CHAIN_APPROX_TC89_KCOS)
+    contours, _ = cv.findContours(gray, cv.RETR_LIST,
+                                  cv.CHAIN_APPROX_TC89_KCOS)
     for i in contours:
         if cv.contourArea(i) > 5000 and cv.contourArea(i) < 60000:
             cnt += 1
@@ -150,9 +146,9 @@ def comparison(vec1: np.ndarray, vec2: np.ndarray, img: np.ndarray):
     """
     sos = img.reshape((1, -1))
     if np.linalg.norm(vec1 - sos) < np.linalg.norm(vec2 - sos):
-        print("квадрат")
+        return "квадрат"
     else:
-        print("круг")
+        return "круг"
 
 
 if __name__ == "__main__":
@@ -160,8 +156,8 @@ if __name__ == "__main__":
     data_ball = np.array(load_images("data/ball"))
     ball_vector = generalCase(data_ball[:4])
     kube_vector = generalCase(data_kube[4:])
-    comparison(kube_vector.reshape((1, -1)),
-               ball_vector.reshape((1, -1)), data_kube[3])
+    comparison(kube_vector.reshape((1, -1)), ball_vector.reshape((1, -1)),
+                data_kube[3])
 #    show(data_kube)
 #    show(data_ball)
 #    get_masks(data_ball[2], True)
